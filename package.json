@@ -4,7 +4,8 @@
   "description": "Simple chat app implemented with nodejs, express and socket.io",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon app.js"
   },
   "repository": {
     "type": "git",
