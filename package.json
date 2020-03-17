@@ -1,0 +1,30 @@
+{
+  "name": "chatti",
+  "version": "1.0.0",
+  "description": "Simple chat app implemented with nodejs, express and socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NataEn/Chatti.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "socket.io"
+  ],
+  "author": "Natalie",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NataEn/Chatti/issues"
+  },
+  "homepage": "https://github.com/NataEn/Chatti#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
