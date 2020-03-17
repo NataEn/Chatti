@@ -10,5 +10,15 @@ app.use(express.static("static"));
 
 const io = socket(server);
 io.on("connection", socket => {
-  console.log("connectting with socket...", socket.id);
+  console.log("connectting user with socket...", socket.id);
+  socket.on("disconnect", () => {
+    console.log("user disconnected", socket.id);
+  });
+  socket.on("newMessage", data => {
+    console.log("got data from client: ", data);
+    io.sockets.emit("newMessage", data);
+  });
+  socket.on("typing", data => {
+    socket.broadcast.emit("typing", data);
+  });
 });
