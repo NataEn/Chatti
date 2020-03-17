@@ -21,12 +21,11 @@
     <h1 class="text-center">Welcom to my chat app</h1>
     <div id="chat">
       <ul id="chat-window" class="list-group p-3 mb-2 bg-light text-dark">
-        <li id="output" class="bg-light list-group-item">
-          <span id="from" class="text-primary">system: </span
-          ><span id="message">no messages yet...</span>
+        <li class="bg-light list-group-item">
+          <span class="text-primary">system: </span><span>no messages yet</span>
         </li>
-        <div id="typing" class="font-italic text-muted">..is typing</div>
       </ul>
+      <div id="typing" class="font-italic text-muted">x is typing...</div>
       <form action="" method="">
         <input
           type="text"
@@ -34,6 +33,7 @@
           placeholder="name"
           aria-label="name"
           name="name"
+          id="name"
         />
         <div class="input-group mb-3">
           <button

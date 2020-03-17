@@ -15,7 +15,6 @@ io.on("connection", socket => {
     console.log("user disconnected", socket.id);
   });
   socket.on("newMessage", data => {
-    console.log("got data from client: ", data);
     io.sockets.emit("newMessage", data);
   });
   socket.on("typing", data => {
