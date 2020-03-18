@@ -1,7 +1,17 @@
 const express = require("express");
 const socket = require("socket.io");
 const fs = require("fs");
+const path = require("path");
 const app = express();
+
+function ensureDirectoryExistence(filePath) {
+  const dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) {
+    return true;
+  }
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
+}
 
 const server = app.listen(3000, () => {
   console.log("listening to requests on port 3000...");
@@ -20,18 +30,13 @@ io.on("connection", socket => {
     if (data.files) {
       for (let i = 0; i < data.files.length; i++) {
         rawData = data.files[i].content;
-        base64Data = rawData.replace(/^data:image\/jpeg;base64,/, "");
+        base64Data = rawData.replace(/^data:image\/(.*);base64,/, "");
         // dataimage = new Buffer(base64Data, "base64"); not needed
-        require("fs").writeFile(
-          data.files[i].name,
-          base64Data,
-          "base64",
-          function(err) {
-            console.log(err);
-          }
-        );
-
-        console.log("writing to:", data.files[i].name);
+        const fd = path.join("./static/userFiles", data.files[i].name);
+        ensureDirectoryExistence(fd);
+        fs.writeFile(fd, base64Data, "base64", err => {
+          console.log(err);
+        });
       }
     }
     io.sockets.emit("newMessage", data);
