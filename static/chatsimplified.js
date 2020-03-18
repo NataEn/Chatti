@@ -1,4 +1,3 @@
-const socket = io.connect("http://localhost:3000");
 //dom elements
 const message = document.querySelector("#message");
 const name = document.querySelector("#name");
@@ -12,29 +11,6 @@ const inputFile = document.querySelector("input.file");
 const picAmount = document.querySelector("#picAmount");
 //data
 const userData = { name: "", text: "", files: [] };
-
-socket.on("connect", () => {
-  console.log("connected to server");
-});
-socket.on("disconnect", () => {
-  console.log("disconnected from server");
-});
-socket.on("newMessage", data => {
-  const incomingMessage = document.createElement("li");
-  incomingMessage.classList = "bg-light list-group-item";
-
-  const sender = document.createElement("span");
-  sender.className = "text-primary";
-  sender.innerText = `${data.name}: `;
-  const content = document.createElement("span");
-  content.innerText = data.text;
-  incomingMessage.appendChild(sender);
-  incomingMessage.appendChild(content);
-  chat.appendChild(incomingMessage);
-});
-socket.on("typing", data => {
-  typing.innerText = `${data.name} is typing...`;
-});
 
 name.oninput = e => {
   userData.name = e.target.value;
@@ -59,22 +35,16 @@ inputPicture.onchange = e => {
   picAmount.classList.toggle("d-none");
   picAmount.innerText = inputPicture.files.length;
   for (let i = 0; i < inputPicture.files.length; i++) {
-    if (!inputPicture.files[i].type.match("image.*")) {
-      continue;
-    }
     const reader = new FileReader();
+    reader.readAsText(inputPicture.files[i]);
     reader.onload = e => {
       console.log(typeof e.target.result);
       userData.files.push({
         name: inputPicture.files[i].name,
         size: inputPicture.files[i].size,
-        content: reader.result
+        content: e.target.result
       });
-      const img = new Image();
-      img.src = reader.result;
-      chat.appendChild(img);
     };
-    reader.readAsDataURL(inputPicture.files[i]);
   }
   console.log(userData);
 };
