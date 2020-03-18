@@ -5,8 +5,13 @@ const name = document.querySelector("#name");
 const submitBtn = document.querySelector("#submit");
 const typing = document.querySelector("#typing");
 const chat = document.querySelector("#chat-window");
+const picture = document.querySelector("#picture");
+const inputPicture = document.querySelector("input.picture");
+const file = document.querySelector("#file");
+const inputFile = document.querySelector("input.file");
+const picAmount = document.querySelector("#picAmount");
 //data
-const userData = { name: "", text: "" };
+const userData = { name: "", text: "", files: [] };
 
 socket.on("connect", () => {
   console.log("connected to server");
@@ -41,5 +46,21 @@ message.oninput = e => {
 submitBtn.addEventListener("click", e => {
   e.preventDefault();
   typing.innerText = "";
+  console.log(inputPicture.files);
   socket.emit("newMessage", userData);
 });
+inputPicture.onchange = e => {
+  console.log("entered input file");
+  console.log(
+    inputPicture.value,
+    inputPicture.files,
+    inputPicture.files.length
+  );
+  picAmount.classList.toggle("d-none");
+  picAmount.innerText = inputPicture.files.length;
+};
+
+picture.onclick = e => {
+  inputPicture.click();
+  console.log("clicked button");
+};

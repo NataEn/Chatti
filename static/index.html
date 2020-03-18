@@ -2,6 +2,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
     <link
       rel="stylesheet"
@@ -26,7 +27,9 @@
         </li>
       </ul>
       <div id="typing" class="font-italic text-muted">x is typing...</div>
-      <form action="" method="">
+      <div
+       
+      >
         <input
           type="text"
           class="form-control"
@@ -37,8 +40,11 @@
         />
         <div class="input-group mb-3">
           <button
-            class="m-1 btn btn-outline-primary fas fa-camera fa-lg"
-          ></button>
+            class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
+            id="picture"
+          ><span id='picAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
+            <input type="file" class="picture" hidden='hidden' multiple ></input>
+          </button>
           <button
             class="m-1 btn btn-outline-primary fas fa-volume-up fa-lg"
           ></button>
@@ -46,8 +52,17 @@
             class="m-1 btn btn-outline-primary fas fa-video fa-lg"
           ></button>
           <button
+            id="file"
             class="m-1 btn btn-outline-primary fas fa-file-alt fa-lg"
-          ></button>
+          >
+            <input
+              type="file"
+              class="d-none file"
+              accept="image/png, image/jpeg"
+              multiple
+            />
+            
+          </button>
 
           <input
             class="m-1 form-control"
@@ -65,7 +80,7 @@
         >
           Send
         </button>
-      </form>
+      </div>
     </div>
 
     <script src="/chat.js"></script>

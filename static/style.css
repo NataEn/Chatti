@@ -1,3 +1,18 @@
 body {
   color: green;
 }
+input.invisible-input {
+  z-index: -1;
+}
+#picAmount {
+  z-index: 10;
+  width: 35%;
+  height: 40%;
+  top: 3%;
+  right: 3%;
+  border-radius: 50%;
+  padding: 6%;
+  font-size: x-small;
+  color: white;
+  box-shadow: -0.7px 0.3px 2px 0.6px #c9c5c5;
+}
