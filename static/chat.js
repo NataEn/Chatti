@@ -56,7 +56,7 @@ socket.on("newMessage", data => {
 socket.on("typing", data => {
   typing.innerText = `${data.name} is typing...`;
 });
-
+//this doesn't work yet...
 socket.on("getFile", (stream, data) => {
   console.log("start file stream from server", data);
   const imgChunks = "";
@@ -84,6 +84,10 @@ submitBtn.addEventListener("click", e => {
   console.log(inputPicture.files);
   socket.emit("newMessage", userData);
 });
+picture.onclick = e => {
+  inputPicture.click();
+  console.log("clicked button");
+};
 inputPicture.onchange = e => {
   picAmount.classList.toggle("d-none");
   picAmount.innerText = inputPicture.files.length;
@@ -105,9 +109,4 @@ inputPicture.onchange = e => {
     };
     reader.readAsDataURL(inputPicture.files[i]);
   }
-};
-
-picture.onclick = e => {
-  inputPicture.click();
-  console.log("clicked button");
 };
