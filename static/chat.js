@@ -76,11 +76,12 @@ socket.on("newMessage", data => {
         audio.src = file.content;
         chat.appendChild(audio);
       } else if (videoTypes.includes(fileType)) {
-        console.log("in audio");
-        const video = new Video();
+        console.log("in video");
+        const video = document.createElement("video");
         video.setAttribute("type", "video/mp4");
+        video.controls = true;
         video.src = file.content;
-        chat.appendChild(audio);
+        chat.appendChild(video);
       } else {
         console.log("other type of file ");
       }
@@ -163,6 +164,22 @@ inputFile.onchange = e => {
         audioPlayer.controls = true;
         audioPlayer.setAttribute("type", "audio/mpeg");
         chat.appendChild(audioPlayer);
+      };
+    } else if (inputFile.files[i].type.match("video.*")) {
+      const reader = new FileReader();
+      const videoPlayer = document.createElement("video");
+      reader.readAsDataURL(inputFile.files[i]);
+      reader.onload = e => {
+        console.log("added audio file");
+        userData.files.push({
+          name: inputFile.files[i].name,
+          size: inputFile.files[i].size,
+          content: reader.result
+        });
+        videoPlayer.src = reader.result;
+        videoPlayer.controls = true;
+        videoPlayer.setAttribute("type", "video/mp4");
+        chat.appendChild(videoPlayer);
       };
     }
   }
