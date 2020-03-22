@@ -1,10 +1,3 @@
-const audio = document.querySelector("#audio");
-const inputAudio = document.querySelector(".audio");
-const player = document.querySelector("#player");
-audio.onclick = e => {
-  inputAudio.click();
-  console.log("clicked record button");
-};
 inputAudio.onchange = e => {
   console.log("in audio input", e);
   const file = e.target.files[0];

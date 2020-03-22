@@ -51,19 +51,18 @@
             <input type="file" class="picture" hidden='hidden' multiple ></input>
           </button>
           <button
-            class="m-1 btn btn-outline-primary fas fa-volume-up fa-lg" id='audio'
-          ><input class='audio' hidden='hidden' type="file" accept="audio/*" capture/></button>
+            class="m-1 btn btn-outline-primary fas fa-microphone fa-lg" id='audio'
+          ><input class='audio' hidden='hidden' type="file" capture/></button>
           <button
             class="m-1 btn btn-outline-primary fas fa-video fa-lg"
           ></button>
           <button
             id="file"
-            class="m-1 btn btn-outline-primary fas fa-file-alt fa-lg"
-          >
+            class="m-1 btn btn-outline-primary fas fa-paperclip fa-lg"
+          ><span id='fileAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
             <input
               type="file"
               class="d-none file"
-              accept="image/png, image/jpeg"
               multiple
             />
             

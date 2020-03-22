@@ -6,11 +6,18 @@ const name = document.querySelector("#name");
 const submitBtn = document.querySelector("#submit");
 const typing = document.querySelector("#typing");
 const chat = document.querySelector("#chat-window");
-const picture = document.querySelector("#picture");
-const inputPicture = document.querySelector("input.picture");
+
 const file = document.querySelector("#file");
 const inputFile = document.querySelector("input.file");
+const fileAmount = document.querySelector("#fileAmount");
+
+const picture = document.querySelector("#picture");
+const inputPicture = document.querySelector("input.picture");
 const picAmount = document.querySelector("#picAmount");
+
+const audio = document.querySelector("#audio");
+const inputAudio = document.querySelector(".audio");
+const player = document.querySelector("#player");
 
 //data
 const userData = { name: "", text: "", files: [] };
@@ -84,29 +91,74 @@ submitBtn.addEventListener("click", e => {
   console.log(inputPicture.files);
   socket.emit("newMessage", userData);
 });
+file.onclick = e => {
+  inputFile.click();
+  console.log("click to input file");
+};
 picture.onclick = e => {
   inputPicture.click();
-  console.log("clicked button");
+  console.log("clicked to input picture or take a picture");
 };
+audio.onclick = e => {
+  inputAudio.click();
+  console.log("clicked to record audio");
+};
+inputFile.onchange = e => {
+  fileAmount.classList.toggle("d-none");
+  fileAmount.innerText = inputFile.files.length;
+  for (let i = 0; i < inputFile.files.length; i++) {
+    if (inputFile.files[i].type.match("image.*")) {
+      const reader = new FileReader();
+      reader.readAsDataURL(inputFile.files[i]);
+      reader.onload = e => {
+        console.log("added image file");
+        userData.files.push({
+          name: inputFile.files[i].name,
+          size: inputFile.files[i].size,
+          content: reader.result
+        });
+        const img = new Image();
+        img.src = reader.result;
+        chat.appendChild(img);
+      };
+    } else if (inputFile.files[i].type.match("audio.*")) {
+      const reader = new FileReader();
+      const audioPlayer = new Audio();
+      reader.readAsDataURL(inputFile.files[i]);
+      reader.onload = e => {
+        console.log("added audio file");
+        userData.files.push({
+          name: inputFile.files[i].name,
+          size: inputFile.files[i].size,
+          content: reader.result
+        });
+        audioPlayer.src = reader.result;
+        audioPlayer.controls = true;
+        audioPlayer.setAttribute("type", "audio/mpeg");
+        chat.appendChild(audioPlayer);
+      };
+    }
+  }
+};
+
 inputPicture.onchange = e => {
   picAmount.classList.toggle("d-none");
   picAmount.innerText = inputPicture.files.length;
   for (let i = 0; i < inputPicture.files.length; i++) {
-    if (!inputPicture.files[i].type.match("image.*")) {
-      continue;
+    if (inputPicture.files[i].type.match("image.*")) {
+      const reader = new FileReader();
+      reader.readAsDataURL(inputPicture.files[i]);
+      reader.onload = e => {
+        console.log(typeof e.target.result);
+        userData.files.push({
+          name: inputPicture.files[i].name,
+          size: inputPicture.files[i].size,
+          content: reader.result
+        });
+        const img = new Image();
+        img.src = reader.result;
+        chat.appendChild(img);
+      };
     }
-    const reader = new FileReader();
-    reader.onload = e => {
-      console.log(typeof e.target.result);
-      userData.files.push({
-        name: inputPicture.files[i].name,
-        size: inputPicture.files[i].size,
-        content: reader.result
-      });
-      const img = new Image();
-      img.src = reader.result;
-      chat.appendChild(img);
-    };
-    reader.readAsDataURL(inputPicture.files[i]);
   }
 };
