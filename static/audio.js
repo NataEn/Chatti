@@ -1,7 +1,7 @@
 const audio = document.querySelector("#audio");
 const audioAmount = document.querySelector("#audioAmount");
-let numRecords = 0;
 
+let numRecords = 0;
 const constrains = {
   audio: true,
   video: false
@@ -69,13 +69,20 @@ navigator.mediaDevices
     };
     mediaRecorder.onstop = ev => {
       numRecords += 1;
-      let blob = new Blob(chunks, { type: "audio/mp3;" });
-      //for sending to server:
-      userData.files.push({
-        name: `rec${numRecords}.mp3`,
-        size: blob.size,
-        content: blob
-      });
+      let blob = new Blob(chunks, { type: "audio/mp3" });
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        let base64data = reader.result;
+        console.log("got rec file in audiojs", base64data);
+
+        //for sending to server:
+        userData.files.push({
+          name: `rec${numRecords}.mp3`,
+          size: blob.size,
+          content: base64data
+        });
+      };
       chunks = [];
       const audioOutput = document.createElement("audio");
       audioOutput.controls = true;

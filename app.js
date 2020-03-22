@@ -5,6 +5,9 @@ const fs = require("fs");
 const path = require("path");
 const app = express();
 
+const audioTypes = ["mp3"];
+const videoTypes = ["mp4"];
+
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
   if (fs.existsSync(dirname)) {
@@ -42,10 +45,6 @@ io.on("connection", socket => {
       for (let i = 0; i < data.files.length; i++) {
         let rawData = data.files[i].content;
         let base64Data = rawData.replace(/^data:(.*);base64,/, "");
-        //let base64Data = rawData.replace(/^data:(.*)\/(.*);base64,/, "");
-
-        // dataimage = new Buffer(base64Data, "base64"); not needed
-
         const fd = path.join("./static/userFiles", data.files[i].name);
         ensureDirectoryExistence(fd);
 
