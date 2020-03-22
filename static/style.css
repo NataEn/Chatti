@@ -1,10 +1,9 @@
 body {
   color: green;
 }
-input.invisible-input {
-  z-index: -1;
-}
-#picAmount {
+
+#picAmount,
+#fileAmount {
   z-index: 10;
   width: 35%;
   height: 40%;
