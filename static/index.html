@@ -27,10 +27,6 @@
           <span class="text-primary">system: </span><span>no messages yet</span>
         </li>
       </ul>
-      <!-- <div>
-        <p>Sample audio</p>
-        <audio id="player" controls src='userFiles/sleepAudio.mp3' type="audio/mpeg"></audio>
-      </div> -->
       <div id="typing" class="font-italic text-muted"></div>
       <div
        
@@ -51,8 +47,8 @@
             <input type="file" class="picture" hidden='hidden' multiple accept="image/*;"capture="camera"></input>
           </button>
           <button
-            class="m-1 btn btn-outline-primary fas fa-microphone fa-lg" id='audio'
-          ><input class='audio' hidden='hidden' type="file" capture/></button>
+            class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='audio'
+          ><span id='audioAmount' class="badge bg-secondary d-none text-center position-absolute">0</span><input class='audio' hidden='hidden' type="file" capture/></button>
           <button
             class="m-1 btn btn-outline-primary fas fa-video fa-lg"
           ></button>

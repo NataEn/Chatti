@@ -26,17 +26,6 @@ const audioTypes = ["mp3"];
 const videoTypes = ["mp4"];
 socket.on("connect", () => {
   console.log("connected to server");
-  // ///from example:
-
-  // $("input.picture").change(function(e) {
-  //   let file = e.target.files[0];
-  //   let stream = ss.createStream();
-  //   // upload a file to the server.
-  //   ss(socket).emit("send-file", stream, file);
-  //   ss.createBlobReadStream(file).pipe(stream);
-  //   $("input.picture").val("");
-  //   $("input.picture").after("<p>File uploaded!</p>");
-  // });
 });
 socket.on("disconnect", () => {
   console.log("disconnected from server");
