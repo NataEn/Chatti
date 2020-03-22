@@ -52,7 +52,7 @@ io.on("connection", socket => {
 
         //saving data recieved from client to server on file:
         fs.writeFile(fd, base64Data, "base64", err => {
-          console.log(err);
+          console.log("error", err);
         });
 
         // //emitting the data back to the chat window:

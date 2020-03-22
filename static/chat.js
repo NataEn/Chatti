@@ -21,7 +21,7 @@ const player = document.querySelector("#player");
 
 //data
 const userData = { name: "", text: "", files: [] };
-const imageTypes = ["jpeg", "jpg"];
+const imageTypes = ["jpeg", "jpg", "png"];
 const audioTypes = ["mp3"];
 const videoTypes = ["mp4"];
 socket.on("connect", () => {
@@ -60,22 +60,29 @@ socket.on("newMessage", data => {
     for (let file of data.files) {
       const fileType = file.name.split(".").pop();
       console.log("recieved file:", fileType, " from server");
-      if (fileType in imageTypes) {
+      console.log(file.content);
+
+      if (imageTypes.includes(fileType)) {
+        console.log("in audio");
         const img = document.createElement("img");
         // img.src = "data:image/jpeg;base64," + window.btoa(data.files[0].content);
-        img.src = data.files[0].content;
+        img.src = file.content;
         chat.appendChild(img);
-      } else if (fileType in audioTypes) {
+      } else if (audioTypes.includes(fileType)) {
+        console.log("in audio");
         const audio = document.createElement("audio");
         audio.controls = true;
         audio.setAttribute("type", "audio/mpeg");
-        audio.src = data.files[i].content;
+        audio.src = file.content;
         chat.appendChild(audio);
-      } else if (file in videoTypes) {
+      } else if (videoTypes.includes(fileType)) {
+        console.log("in audio");
         const video = new Video();
         video.setAttribute("type", "video/mp4");
-        video.src = data.files[i].content;
+        video.src = file.content;
         chat.appendChild(audio);
+      } else {
+        console.log("other type of file ");
       }
     }
   }
