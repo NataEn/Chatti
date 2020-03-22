@@ -6,7 +6,7 @@ inputAudio.onchange = e => {
   reader.readAsDataURL(file);
   reader.onload = e => {
     console.log("from reader", e.target.result);
-    const base64 = reader.result.replace(/^data:audio\/(.*);base64,/, "");
+    // const base64 = reader.result.replace(/^data:audio\/(.*);base64,/, "");
     audioPlayer.src = reader.result;
     audioPlayer.controls = true;
     audioPlayer.setAttribute("type", "audio/mpeg");
