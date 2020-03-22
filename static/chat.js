@@ -15,9 +15,9 @@ const picture = document.querySelector("#picture");
 const inputPicture = document.querySelector("input.picture");
 const picAmount = document.querySelector("#picAmount");
 
-const audio = document.querySelector("#audio");
-const inputAudio = document.querySelector(".audio");
-const player = document.querySelector("#player");
+// const audio = document.querySelector("#audio");
+// const inputAudio = document.querySelector(".audio");
+// const player = document.querySelector("#player");
 
 //data
 const userData = { name: "", text: "", files: [] };
@@ -127,10 +127,7 @@ picture.onclick = e => {
   inputPicture.click();
   console.log("clicked to input picture or take a picture");
 };
-audio.onclick = e => {
-  inputAudio.click();
-  console.log("clicked to record audio");
-};
+
 inputFile.onchange = e => {
   fileAmount.classList.toggle("d-none");
   fileAmount.innerText = inputFile.files.length;

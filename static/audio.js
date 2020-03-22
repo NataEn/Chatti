@@ -1,31 +1,56 @@
-inputAudio.onchange = e => {
-  console.log("in audio input", e);
-  const file = e.target.files[0];
-  const reader = new FileReader();
-  const audioPlayer = new Audio();
-  reader.readAsDataURL(file);
-  reader.onload = e => {
-    console.log("from reader", e.target.result);
-    // const base64 = reader.result.replace(/^data:audio\/(.*);base64,/, "");
-    audioPlayer.src = reader.result;
-    audioPlayer.controls = true;
-    audioPlayer.setAttribute("type", "audio/mpeg");
-    chat.appendChild(audioPlayer);
-  };
-  const rawData = reader.result;
-  //data:audio/mp3;base64
+const audio = document.querySelector("#audio");
+const inputAudio = document.querySelector(".audio");
+// const audioOutput = document.createElement("audio");
+// audioOutput.controls = true;
+// audioOutput.setAttribute("type", "audio/mp3");
 
-  // Do something with the audio file.
-  //   player.src = url;
-  //   const handleSuccess = function(stream) {
-  //     if (window.URL) {
-  //       player.srcObject = stream;
-  //     } else {
-  //       player.src = stream;
-  //     }
-  //   };
-
-  //   navigator.mediaDevices
-  //     .getUserMedia({ audio: true, video: false })
-  //     .then(handleSuccess);
+const constrains = {
+  audio: true,
+  video: false
 };
+navigator.mediaDevices
+  .enumerateDevices()
+  .then(devices => {
+    devices.forEach(device => {
+      console.log(device.kind, device.label);
+    });
+  })
+  .catch(err => {
+    console.log(`an error occured: ${err.name}: ${err.message}`);
+  });
+
+navigator.mediaDevices
+  .getUserMedia(constrains)
+  .then(mediaStreamObj => {
+    const mediaRecorder = new MediaRecorder(mediaStreamObj);
+    let chunks = [];
+    audio.onclick = e => {
+      console.log("keydown to record audio");
+      if (mediaRecorder.state === "inactive") {
+        mediaRecorder.start();
+      } else {
+        mediaRecorder.stop();
+      }
+      console.log(mediaRecorder.state);
+    };
+
+    mediaRecorder.ondataavailable = function(ev) {
+      chunks.push(ev.data);
+    };
+    mediaRecorder.onstop = ev => {
+      let blob = new Blob(chunks, { type: "audio/mp3;" });
+      chunks = [];
+      const audioOutput = document.createElement("audio");
+      audioOutput.controls = true;
+      audioOutput.setAttribute("type", "audio/mp3");
+      audioOutput.src = URL.createObjectURL(blob);
+      chat.appendChild(audioOutput);
+    };
+    audioOutput.onloadedmetadata = event => {
+      //chat.appendChild(audioOutput);
+      console.log("loaded new audio");
+    };
+  })
+  .catch(err => {
+    console.log(`an error occured: ${err.name}: ${err.message}`);
+  });

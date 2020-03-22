@@ -41,7 +41,6 @@ io.on("connection", socket => {
     if (data.files && data.files.length) {
       for (let i = 0; i < data.files.length; i++) {
         let rawData = data.files[i].content;
-
         let base64Data = rawData.replace(/^data:(.*);base64,/, "");
         //let base64Data = rawData.replace(/^data:(.*)\/(.*);base64,/, "");
 
