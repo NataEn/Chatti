@@ -28,11 +28,14 @@
         </li>
       </ul>
       <div id="typing" class="font-italic text-muted"></div>
-      <div class="video-container">
-        <video id="video" class='w-45 h-45 p-3'>Video not available...</video>
+      <div class="video-container d-flex flex-column">
+        <video class='video w-45 h-45 p-3'>Video not available...</video>
         <div class="input-group mb-3"> 
           <div class="input-group-prepend"> 
-            <button id="photo-button" class="btn btn-dark d-inline-block">Take a Photo</button>
+            <button id="photo-button" class="btn btn-success d-inline-block">Take a Photo</button>
+          </div>
+          <div class="input-group-prepend"> 
+            <button id="video-button" class="btn btn-info d-inline-block">Record video</button>
           </div>
         <select id="photoFilter" class="select custom-select d-inline-block">
           <option value="none" selected>Choose filter...</option>

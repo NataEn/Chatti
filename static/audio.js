@@ -1,17 +1,20 @@
 const audioRecord = document.querySelector("#audio");
 const audioAmount = document.querySelector("#audioAmount");
-//const videoAmount = 0; //to be created in the index html;
+const videoRecord = document.querySelector("#video");
+const videoAmount = document.querySelector("#videoAmount");
 const photoRecord = document.querySelector("#photo");
 const photoAmount = document.querySelector("#photoAmount");
-const video = document.getElementById("video");
+const video = document.querySelector(".video");
 const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
 const photoButton = document.getElementById("photo-button");
+const videoButton = document.getElementById("video-button");
 const clearButton = document.getElementById("clear-button");
 const photoFilter = document.querySelector("#photoFilter");
 //utility:
 let audioRecordNum = 0;
 let photoRecordNum = 0;
+let videoRecordNum = 0;
 let videoStreaming = false;
 let chosenConstrains = null;
 let streaming = false;
@@ -19,7 +22,7 @@ let filter = "none";
 const constrains = {
   voice: { audio: true, video: false },
   photo: { audio: false, video: true },
-  film: { audio: false, video: true }
+  film: { audio: true, video: true }
 };
 const typesState = {
   voice: null,
@@ -118,6 +121,9 @@ photoFilter.onchange = e => {
 photoButton.onclick = e => {
   takePicture();
   e.preventDefault();
+};
+videoButton.onclick = () => {
+  videoRecord.click();
 };
 // Clear event
 clearButton.onclick = e => {
@@ -237,5 +243,17 @@ photoRecord.onclick = e => {
     "image/jpg",
     photoRecordNum,
     photoAmount
+  );
+};
+
+videoRecord.onclick = e => {
+  console.log("clicked to take a video", e.target.dataset.rectype);
+  chosenConstrains = constrains.film;
+  getMediaStrem(
+    e.target.dataset.rectype,
+    chosenConstrains,
+    "video/mp4",
+    videoRecordNum,
+    videoAmount
   );
 };
