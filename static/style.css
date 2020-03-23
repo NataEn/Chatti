@@ -4,7 +4,9 @@ body {
 
 #picAmount,
 #fileAmount,
-#audioAmount {
+#audioAmount,
+#videoAmount,
+#photoAmount {
   z-index: 10;
   width: 35%;
   height: 40%;
@@ -18,4 +20,8 @@ body {
 }
 .removeRecord:hover {
   cursor: pointer;
+}
+.video-container {
+  width: 500px;
+  margin: 30px auto;
 }

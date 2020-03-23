@@ -28,9 +28,26 @@
         </li>
       </ul>
       <div id="typing" class="font-italic text-muted"></div>
-      <div
-       
-      >
+      <div class="video-container">
+        <video id="video" class='w-45 h-45 p-3'>Video not available...</video>
+        <div class="input-group mb-3"> 
+          <div class="input-group-prepend"> 
+            <button id="photo-button" class="btn btn-dark d-inline-block">Take a Photo</button>
+          </div>
+        <select id="photo-filter" class="select custom-select d-inline-block">
+          <option value="none" selected>Choose filter...</option>
+          <option value="none">Normal</option>
+          <option value="grayscale(100%)">Grayscale</option>
+          <option value="sepia(100%)">Sepia</option>
+          <option value="invert(100%)">Invert</option>
+          <option value="hue-rotate(90deg)">Hue</option>
+          <option value="blur(10px)">Blur</option>
+          <option value="contrast(200%)">Contrast</option>
+        </select>
+        <button id="clear-button" class="btn btn-light fas fa-trash-alt"></button></div>
+        <canvas id="canvas" class='w-75 h-75 p-3'>Clear settings</canvas>
+      </div>
+      <div>
         <input
           type="text"
           class="form-control"
@@ -47,13 +64,21 @@
             <input type="file" class="picture" hidden='hidden' multiple accept="image/*;"capture="camera"></input>
           </button>
           <button
-            class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='audio'
-          ><span id='audioAmount' class="badge bg-secondary d-none text-center position-absolute">0</span><input class='audio' hidden='hidden' type="file" capture/></button>
+            class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
+            id="photo"
+            data-recType='photo'
+          ><span id='photoAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
+            
+          </button>
           <button
-            class="m-1 btn btn-outline-primary fas fa-video fa-lg"
-          ></button>
+          data-recType='voice' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='audio'
+          ><span id='audioAmount' class="badge bg-secondary d-none text-center position-absolute">0</span></button>
           <button
-            id="file"
+          data-recType='film'
+            class="m-1 btn btn-outline-primary fas fa-video fa-lg position-relative" id='video'
+          ><span id='videoAmount' class="badge bg-secondary d-none text-center position-absolute">0</span></button>
+          <button
+            id="file" 
             class="m-1 btn btn-outline-primary fas fa-paperclip fa-lg position-relative"
           ><span id='fileAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
             <input
