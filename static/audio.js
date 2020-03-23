@@ -9,13 +9,14 @@ const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
 const photoButton = document.getElementById("photo-button");
 const clearButton = document.getElementById("clear-button");
-const photoFilter = document.getElementById("photo-filter");
+const photoFilter = document.querySelector("#photoFilter");
 //utility:
 let audioRecordNum = 0;
 let photoRecordNum = 0;
 let videoStreaming = false;
 let chosenConstrains = null;
 let streaming = false;
+let filter = "none";
 const constrains = {
   voice: { audio: true, video: false },
   photo: { audio: false, video: true },
@@ -38,15 +39,17 @@ const createWrapper = (childelement, counter, elemAmount) => {
 
   const classes = ["fas", "fa-trash-alt", "removeRecord"];
   trash.classList.add(...classes);
+  trash.setAttribute("data-num", childelement.dataset.num);
   trash.onclick = () => {
     for (let i = 0; i < userData.files.length; i++) {
       console.log(childelement.dataset.num);
       if (userData.files[i].name.includes(childelement.dataset.num)) {
         userData.files.splice(i, 1);
-        wrapper.remove();
+
         counter -= 1;
         elemAmount.innerHTML = counter;
       }
+      photos.removeChild(wrapper);
     }
   };
   return wrapper;
@@ -54,14 +57,18 @@ const createWrapper = (childelement, counter, elemAmount) => {
 // Take picture from canvas
 function takePicture() {
   // Create canvas
+  console.log("pic taken");
   const context = canvas.getContext("2d");
   // canvas.classList.toggle("d-none"); just for the beggining
-  context.drawImage(video, 0, 0, width, height);
+  context.drawImage(video, 0, 0, "300", "200");
   const imgUrl = canvas.toDataURL("image/png");
   const img = document.createElement("img");
+  photoRecordNum += 1;
+  photoAmount.innerText = photoRecordNum;
+  img.setAttribute("data-num", `${photoRecordNum}`);
   img.setAttribute("src", imgUrl);
   img.style.filter = filter;
-  const photoWrappwer = createWrapper(img);
+  const photoWrappwer = createWrapper(img, photoRecordNum, photoAmount);
   photos.appendChild(photoWrappwer);
 }
 
@@ -88,7 +95,8 @@ video.addEventListener(
   false
 );
 // Filter event
-photoFilter.onChange = e => {
+photoFilter.onchange = e => {
+  console.log("changed filter to", e.target.value);
   filter = e.target.value;
   video.style.filter = filter;
   e.preventDefault();
@@ -128,8 +136,6 @@ async function getMediaStrem(
     const mediaStreamObj = await navigator.mediaDevices.getUserMedia(
       chosenConstrains
     );
-    video.srcObject = mediaStreamObj;
-    video.play();
     let chunks = [];
     if (typesState[recType] === null) {
       const mediaRecorder = new MediaRecorder(mediaStreamObj);

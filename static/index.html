@@ -34,7 +34,7 @@
           <div class="input-group-prepend"> 
             <button id="photo-button" class="btn btn-dark d-inline-block">Take a Photo</button>
           </div>
-        <select id="photo-filter" class="select custom-select d-inline-block">
+        <select id="photoFilter" class="select custom-select d-inline-block">
           <option value="none" selected>Choose filter...</option>
           <option value="none">Normal</option>
           <option value="grayscale(100%)">Grayscale</option>
@@ -45,8 +45,9 @@
           <option value="contrast(200%)">Contrast</option>
         </select>
         <button id="clear-button" class="btn btn-light fas fa-trash-alt"></button></div>
-        <canvas id="canvas" class='w-75 h-75 p-3'>Clear settings</canvas>
+        <canvas id="canvas" class='w-45 h-45 p-3 d-none'>Clear settings</canvas>
       </div>
+      <div id='photos'></div>
       <div>
         <input
           type="text"
