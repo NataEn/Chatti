@@ -1,6 +1,5 @@
 const audioRecord = document.querySelector("#audio");
 const audioAmount = document.querySelector("#audioAmount");
-//const video = 0; //to be created in the index html;
 //const videoAmount = 0; //to be created in the index html;
 const photoRecord = document.querySelector("#photo");
 const photoAmount = document.querySelector("#photoAmount");
@@ -28,7 +27,7 @@ const typesState = {
   film: null
 };
 
-const createWrapper = (childelement, counter, elemAmount) => {
+const createWrapper = (childelement, counter, elemAmount, fileType) => {
   console.log("in wrapper got element", childelement.tagName);
   counter += 1;
   elemAmount.innerText = counter;
@@ -36,20 +35,24 @@ const createWrapper = (childelement, counter, elemAmount) => {
   const trash = document.createElement("span");
   wrapper.appendChild(childelement);
   wrapper.appendChild(trash);
+  wrapper.setAttribute("data-id", `${fileType}_${childelement.dataset.num}`);
 
   const classes = ["fas", "fa-trash-alt", "removeRecord"];
   trash.classList.add(...classes);
   trash.setAttribute("data-num", childelement.dataset.num);
   trash.onclick = () => {
     for (let i = 0; i < userData.files.length; i++) {
-      console.log(childelement.dataset.num);
-      if (userData.files[i].name.includes(childelement.dataset.num)) {
+      if (
+        userData.files[i].name.includes(
+          `rec${childelement.dataset.num}.${fileType}`
+        )
+      ) {
         userData.files.splice(i, 1);
-
+        chat.removeChild(childelement.parentNode);
         counter -= 1;
         elemAmount.innerHTML = counter;
+        console.log("counter reduced to: ", counter);
       }
-      photos.removeChild(wrapper);
     }
   };
   return wrapper;
@@ -68,8 +71,18 @@ function takePicture() {
   img.setAttribute("data-num", `${photoRecordNum}`);
   img.setAttribute("src", imgUrl);
   img.style.filter = filter;
-  const photoWrappwer = createWrapper(img, photoRecordNum, photoAmount);
-  photos.appendChild(photoWrappwer);
+  //add image to userdata
+  let base64data = imgUrl;
+  //for sending to server:
+  //size should be blob.size.. let blob = new Blob(chunks, { type: fileType });
+  userData.files.push({
+    name: `rec${photoRecordNum}.png`,
+    size: base64data.length,
+    content: base64data
+  });
+
+  const photoWrappwer = createWrapper(img, photoRecordNum, photoAmount, "png");
+  chat.appendChild(photoWrappwer);
 }
 
 ///presenting the audio record amounts:
@@ -110,6 +123,7 @@ photoButton.onclick = e => {
 clearButton.addEventListener.onclick = e => {
   filter = "none";
   video.style.filter = filter;
+  console.log("changed filter to:", video.style.filter);
   photoFilter.selectedIndex = 0;
 };
 
@@ -140,12 +154,11 @@ async function getMediaStrem(
     if (typesState[recType] === null) {
       const mediaRecorder = new MediaRecorder(mediaStreamObj);
       typesState[recType] = mediaRecorder;
-    } else if (recType === "photo") {
+    }
+    //turn on video when taking a photo
+    if (recType === "photo" || recType === "video") {
       video.srcObject = mediaStreamObj;
       video.play();
-      console.log("video state", video.state);
-    } else {
-      console.log("entered to stop recording");
     }
 
     typesState[recType].ondataavailable = function(ev) {
@@ -180,7 +193,12 @@ async function getMediaStrem(
       recordOutput.setAttribute("type", fileType);
       recordOutput.setAttribute("data-num", `${counter}`);
       recordOutput.src = URL.createObjectURL(blob);
-      const recordWrapper = createWrapper(recordOutput, counter, elemAmount);
+      const recordWrapper = createWrapper(
+        recordOutput,
+        counter,
+        elemAmount,
+        fileType.split("/")[1]
+      );
       chat.appendChild(recordWrapper);
 
       handelRecordAmounts(elemAmount, counter);
