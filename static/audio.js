@@ -76,7 +76,7 @@ function takePicture() {
   //for sending to server:
   //size should be blob.size.. let blob = new Blob(chunks, { type: fileType });
   userData.files.push({
-    name: `rec${photoRecordNum}.png`,
+    name: `recPhoto_${photoRecordNum}.png`,
     size: base64data.length,
     content: base64data
   });
@@ -120,7 +120,7 @@ photoButton.onclick = e => {
   e.preventDefault();
 };
 // Clear event
-clearButton.addEventListener.onclick = e => {
+clearButton.onclick = e => {
   filter = "none";
   video.style.filter = filter;
   console.log("changed filter to:", video.style.filter);
@@ -167,14 +167,13 @@ async function getMediaStrem(
 
     typesState[recType].onstop = ev => {
       let blob = new Blob(chunks, { type: fileType });
-
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = () => {
         let base64data = reader.result;
         //for sending to server:
         userData.files.push({
-          name: `rec${counter}.${fileType.split("/")[1]}`,
+          name: `rec${fileType}_${counter}.${fileType.split("/")[1]}`,
           size: blob.size,
           content: base64data
         });
