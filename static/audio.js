@@ -4,6 +4,7 @@ const videoRecord = document.querySelector("#video");
 const videoAmount = document.querySelector("#videoAmount");
 const photoRecord = document.querySelector("#photo");
 const photoAmount = document.querySelector("#photoAmount");
+const videoContainer = document.querySelector(".video-container");
 const video = document.querySelector(".video");
 const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
@@ -12,49 +13,61 @@ const videoButton = document.getElementById("video-button");
 const clearButton = document.getElementById("clear-button");
 const photoFilter = document.querySelector("#photoFilter");
 //utility:
-let audioRecordNum = 0;
-let photoRecordNum = 0;
-let videoRecordNum = 0;
-let videoStreaming = false;
-let chosenConstrains = null;
-let streaming = false;
-let filter = "none";
-const constrains = {
-  voice: { audio: true, video: false },
-  photo: { audio: false, video: true },
-  film: { audio: true, video: true }
-};
-const typesState = {
-  voice: null,
-  photo: null,
-  film: null
+
+const recordsState = {
+  voice: {
+    constrains: { audio: true, video: false },
+    counter: 0,
+    counterElem: audioAmount,
+    streamObj: null,
+    fileType: "audio/mp3"
+  },
+  photo: {
+    constrains: { audio: false, video: true },
+    counter: 0,
+    counterElem: photoAmount,
+    stremObj: null,
+    fileType: "image/jpg"
+  },
+  film: {
+    constrains: { audio: true, video: true },
+    counter: 0,
+    counterElem: videoAmount,
+    streamObj: null,
+    fileType: "video/mp4"
+  }
 };
 
-const createWrapper = (childelement, counter, elemAmount, fileType) => {
+let streaming = false;
+let filter = "none";
+
+const createWrapper = (childelement, recordData) => {
   console.log("in wrapper got element", childelement.tagName);
-  counter += 1;
-  elemAmount.innerText = counter;
   const wrapper = document.createElement("div");
   const trash = document.createElement("span");
   wrapper.appendChild(childelement);
   wrapper.appendChild(trash);
-  wrapper.setAttribute("data-id", `${fileType}_${childelement.dataset.num}`);
+  wrapper.setAttribute(
+    "data-id",
+    `${recordData.fileType.split("/")[1]}_${childelement.dataset.num}`
+  );
 
   const classes = ["fas", "fa-trash-alt", "removeRecord"];
   trash.classList.add(...classes);
   trash.setAttribute("data-num", childelement.dataset.num);
-  trash.onclick = () => {
+  trash.onclick = e => {
+    console.log("clicked trash", e.currentTarget.parentNode);
     for (let i = 0; i < userData.files.length; i++) {
       if (
         userData.files[i].name.includes(
-          `rec${childelement.dataset.num}.${fileType}`
+          `_${childelement.dataset.num}.${recordData.fileType.split("/")[1]}`
         )
       ) {
         userData.files.splice(i, 1);
-        chat.removeChild(childelement.parentNode);
-        counter -= 1;
-        elemAmount.innerHTML = counter;
-        console.log("counter reduced to: ", counter);
+        chat.removeChild(e.currentTarget.parentNode);
+        recordData.counter -= 1;
+        recordData.counterElem.innerHTML = recordData.counter;
+        console.log("counter reduced to: ", recordData.counter);
       }
     }
   };
@@ -63,39 +76,37 @@ const createWrapper = (childelement, counter, elemAmount, fileType) => {
 // Take picture from canvas
 function takePicture() {
   // Create canvas
-  console.log("pic taken");
   const context = canvas.getContext("2d");
   // canvas.classList.toggle("d-none"); just for the beggining
   context.drawImage(video, 0, 0, "300", "200");
   const imgUrl = canvas.toDataURL("image/png");
   const img = document.createElement("img");
-  photoRecordNum += 1;
-  photoAmount.innerText = photoRecordNum;
-  img.setAttribute("data-num", `${photoRecordNum}`);
+  recordsState.photo.counter += 1;
+  recordsState.photo.counterElem.innerText = recordsState.photo.counter;
+  img.setAttribute("data-num", `${recordsState.photo.counter}`);
   img.setAttribute("src", imgUrl);
   img.style.filter = filter;
-  //add image to userdata
+
   let base64data = imgUrl;
   //for sending to server:
   //size should be blob.size.. let blob = new Blob(chunks, { type: fileType });
   userData.files.push({
-    name: `recPhoto_${photoRecordNum}.png`,
+    name: `recPhoto_${recordsState.photo.counter}.png`,
     size: base64data.length,
     content: base64data
   });
 
-  const photoWrappwer = createWrapper(img, photoRecordNum, photoAmount, "png");
+  const photoWrappwer = createWrapper(img, recordsState.photo);
   chat.appendChild(photoWrappwer);
 }
 
 ///presenting the audio record amounts:
-const handelRecordAmounts = (element, counter) => {
-  if (counter == 0) {
-    element.classList.add("d-none");
-    element.innerHTML = 0;
+const handelRecordAmounts = recordData => {
+  if (recordData.counter == 0) {
+    recordData.counterElem.classList.add("d-none");
   } else {
-    element.innerHTML = counter;
-    element.classList.remove("d-none");
+    recordData.counterElem.innerText = recordData.counter;
+    recordData.counterElem.classList.remove("d-none");
   }
 };
 // html-elements functionality
@@ -105,8 +116,9 @@ video.addEventListener(
   "canplay",
   function(e) {
     if (!streaming) {
-      videoStreaming = true;
+      streaming = true;
     }
+    videoContainer.classList.toggle("d-none");
   },
   false
 );
@@ -133,7 +145,7 @@ clearButton.onclick = e => {
   photoFilter.selectedIndex = 0;
 };
 
-//recording
+//recording devices
 navigator.mediaDevices
   .enumerateDevices()
   .then(devices => {
@@ -144,22 +156,37 @@ navigator.mediaDevices
   .catch(err => {
     console.log(`an error occured: ${err.name}: ${err.message}`);
   });
-
-async function getMediaStrem(
-  recType,
-  chosenConstrains,
-  fileType,
-  counter,
-  elemAmount
-) {
+//add recorded element to DOM
+const addRecordToChat = (recordData, blob) => {
+  let recordOutput = document.createElement(recordData.fileType.split("/")[0]);
+  if (recordData.fileType.split("/")[0] === "audio") {
+    recordOutput.controls = true;
+  } else if (recordData.fileType.split("/")[0] === "image") {
+    recordOutput = document.createElement("img");
+    recordOutput.style.filter = filter;
+  } else if (recordData.fileType.split("/")[0] === "video") {
+    recordOutput.controls = true;
+    recordOutput.style.filter = filter;
+  }
+  recordOutput.setAttribute("type", recordData.fileType);
+  recordOutput.setAttribute("data-num", `${recordData.counter}`);
+  recordOutput.src = URL.createObjectURL(blob);
+  const recordWrapper = createWrapper(recordOutput, recordData);
+  chat.appendChild(recordWrapper);
+  recordData.counter += 1;
+  recordData.counterElem.innerText = recordData.counter;
+  handelRecordAmounts(recordData);
+};
+//create record element
+async function getMediaStrem(recType, recordData) {
   try {
     const mediaStreamObj = await navigator.mediaDevices.getUserMedia(
-      chosenConstrains
+      recordData.constrains
     );
     let chunks = [];
-    if (typesState[recType] === null) {
+    if (recordData.streamObj === null) {
       const mediaRecorder = new MediaRecorder(mediaStreamObj);
-      typesState[recType] = mediaRecorder;
+      recordData.streamObj = mediaRecorder;
     }
     //turn on video when taking a photo
     if (recType === "photo" || recType === "video") {
@@ -167,56 +194,34 @@ async function getMediaStrem(
       video.play();
     }
 
-    typesState[recType].ondataavailable = function(ev) {
+    recordData.streamObj.ondataavailable = function(ev) {
       chunks.push(ev.data);
     };
 
-    typesState[recType].onstop = ev => {
-      let blob = new Blob(chunks, { type: fileType });
+    recordData.streamObj.onstop = ev => {
+      let blob = new Blob(chunks, { type: recordData.fileType });
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       reader.onloadend = () => {
         let base64data = reader.result;
         //for sending to server:
         userData.files.push({
-          name: `rec${fileType}_${counter}.${fileType.split("/")[1]}`,
+          name: `rec${recordData.fileType}_${recordData.counter}.${
+            recordData.fileType.split("/")[1]
+          }`,
           size: blob.size,
           content: base64data
         });
       };
-
+      addRecordToChat(recordData, blob);
       chunks = [];
-      let recordOutput = document.createElement(fileType.split("/")[0]);
-      if (
-        fileType.split("/")[0] === "audio" ||
-        fileType.split("/")[0] === "video"
-      ) {
-        recordOutput.controls = true;
-      } else if (fileType.split("/")[0] === "image") {
-        recordOutput = document.createElement("img");
-      }
-      recordOutput.setAttribute("type", fileType);
-      recordOutput.setAttribute("data-num", `${counter}`);
-      recordOutput.src = URL.createObjectURL(blob);
-      const recordWrapper = createWrapper(
-        recordOutput,
-        counter,
-        elemAmount,
-        fileType.split("/")[1]
-      );
-      chat.appendChild(recordWrapper);
-
-      handelRecordAmounts(elemAmount, counter);
     };
-    console.log("before media recorder state: ", typesState[recType].state);
-    if (typesState[recType].state == "inactive") {
-      typesState[recType].start();
-      console.log("media recorder state: ", typesState[recType].state);
-    } else if (typesState[recType].state == "recording") {
-      counter += 1;
-      console.log(elemAmount);
-      elemAmount.innerText = counter;
-      typesState[recType].stop();
+    console.log("before media recorder state: ", recordData.streamObj.state);
+    if (recordData.streamObj.state == "inactive") {
+      recordData.streamObj.start();
+      console.log("media recorder state: ", recordData.streamObj.state);
+    } else if (recordData.streamObj.state == "recording") {
+      recordData.streamObj.stop();
       console.log("media recorder stopped: ");
     }
   } catch (err) {
@@ -225,35 +230,14 @@ async function getMediaStrem(
 }
 audioRecord.onclick = e => {
   console.log("clicked to record audio", e.target.dataset.rectype);
-  chosenConstrains = constrains.voice;
-  getMediaStrem(
-    e.target.dataset.rectype,
-    chosenConstrains,
-    "audio/mp3",
-    audioRecordNum,
-    audioAmount
-  );
+  getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 photoRecord.onclick = e => {
   console.log("clicked to take a photo", e.target.dataset.rectype);
-  chosenConstrains = constrains.photo;
-  getMediaStrem(
-    e.target.dataset.rectype,
-    chosenConstrains,
-    "image/jpg",
-    photoRecordNum,
-    photoAmount
-  );
+  getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 
 videoRecord.onclick = e => {
   console.log("clicked to take a video", e.target.dataset.rectype);
-  chosenConstrains = constrains.film;
-  getMediaStrem(
-    e.target.dataset.rectype,
-    chosenConstrains,
-    "video/mp4",
-    videoRecordNum,
-    videoAmount
-  );
+  getMediaStrem(e.target.dataset.rectype, recordsState.film);
 };

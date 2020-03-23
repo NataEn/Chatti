@@ -29,3 +29,7 @@ body {
   width: max-content;
   height: max-content;
 }
+.video-container {
+  display: flex;
+  flex-direction: column;
+}
