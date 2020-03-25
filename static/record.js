@@ -84,6 +84,7 @@ const createWrapper = (childelement, recordData) => {
         userData.files.splice(i, 1);
         chat.removeChild(e.currentTarget.parentNode);
         recordData.counter -= 1;
+        handelRecordAmounts(recordData);
         recordData.counterElem.innerHTML = recordData.counter;
         console.log("counter reduced to: ", recordData.counter);
       }
@@ -119,7 +120,7 @@ function takePicture() {
 
 ///presenting the audio record amounts:
 const handelRecordAmounts = recordData => {
-  if (recordData.counter == 0) {
+  if (recordData.counter === 0) {
     recordData.counterElem.classList.add("d-none");
   } else {
     recordData.counterElem.innerText = recordData.counter;
@@ -130,11 +131,9 @@ const handelRecordAmounts = recordData => {
 const stopStreamedVideo = () => {
   const stream = video.srcObject;
   const tracks = stream.getTracks();
-  debugger;
   console.log("stopping stream");
   tracks.forEach(function(track) {
     console.log("in stop loop");
-
     track.stop();
   });
 
@@ -187,6 +186,8 @@ navigator.mediaDevices
   });
 //add recorded element to DOM
 const addRecordToChat = (recordData, blob) => {
+  recordData.counter += 1;
+  recordData.counterElem.innerText = recordData.counter;
   let recordOutput = document.createElement(recordData.fileType.split("/")[0]);
   if (recordData.fileType.split("/")[0] === "audio") {
     recordOutput.controls = true;
@@ -198,12 +199,12 @@ const addRecordToChat = (recordData, blob) => {
     recordOutput.style.filter = filter;
   }
   recordOutput.setAttribute("type", recordData.fileType);
+
   recordOutput.setAttribute("data-num", `${recordData.counter}`);
   recordOutput.src = URL.createObjectURL(blob);
   const recordWrapper = createWrapper(recordOutput, recordData);
+
   chat.appendChild(recordWrapper);
-  recordData.counter += 1;
-  recordData.counterElem.innerText = recordData.counter;
   handelRecordAmounts(recordData);
 };
 //create record element
@@ -219,7 +220,6 @@ async function getMediaStrem(recType, recordData) {
     }
     //turn on video when taking a photo, video or video live streaming
     if (recType === "photo" || recType === "film" || recType === "filmcall") {
-      debugger;
       video.srcObject = mediaStreamObj;
       video.play();
       ss(socket).emit("calling", recordData.streamObj);
@@ -227,7 +227,6 @@ async function getMediaStrem(recType, recordData) {
 
     recordData.streamObj.ondataavailable = function(ev) {
       chunks.push(ev.data);
-      debugger;
       if (recType === "voicecall" || recType === "filmcall") {
         console.log("before emmiting call to socket");
         ss(socket).emit("calling", mediaRecorder);
@@ -265,12 +264,9 @@ async function getMediaStrem(recType, recordData) {
   }
 }
 audioRecord.onclick = e => {
-  console.log("clicked to record audio", e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 photoRecord.onclick = e => {
-  // videoContainer.classList.toggle("d-none");
-  console.log("clicked to take a photo", e.target.dataset.rectype);
   videoContainer.classList.toggle("d-none");
   if (streaming) {
     stopStreamedVideo();
@@ -280,7 +276,6 @@ photoRecord.onclick = e => {
 };
 
 videoRecord.onclick = e => {
-  console.log("clicked to take a", e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.film);
 };
 
