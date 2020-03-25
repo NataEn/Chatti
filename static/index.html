@@ -22,11 +22,11 @@
   <body class="container-fluid">
     <h1 class="text-center">Welcom to my chat app</h1>
     <button
-    data-recType='phoneCall' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='phoneCall'
+    data-recType='phonecall' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='phoneCall'
     >
     <span class="recieverName badge bg-secondary d-none text-center position-absolute">0</span></button>
     <button
-    data-recType='videoCall'
+    data-recType='filmcall'
       class="m-1 btn btn-outline-primary fas fa-video fa-lg position-relative" id='videoCall'
     ><span class="recieverName badge bg-secondary d-none text-center position-absolute">0</span></button>
 
@@ -69,12 +69,12 @@
           id="name"
         />
         <div class="input-group mb-3">
-          <!-- <button
+          <button
             class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
             id="picture"
           ><span id='picAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
             <input type="file" class="picture" hidden='hidden' multiple accept="image/*;"capture="camera"></input>
-          </button> -->
+          </button>
           <button
             class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
             id="photo"
@@ -85,7 +85,7 @@
           data-recType='voice' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='audio'
           ><span id='audioAmount' class="badge bg-secondary d-none text-center position-absolute">0</span></button>
           <button
-          data-recType='film'
+          data-recType='photo'
             class="m-1 btn btn-outline-primary fas fa-video fa-lg position-relative" id='video'
           ><span id='videoAmount' class="badge bg-secondary d-none text-center position-absolute">0</span></button>
           <button

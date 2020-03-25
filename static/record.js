@@ -104,7 +104,6 @@ function takePicture() {
   img.setAttribute("data-num", `${recordsState.photo.counter}`);
   img.setAttribute("src", imgUrl);
   img.style.filter = filter;
-
   let base64data = imgUrl;
   //for sending to server:
   //size should be blob.size.. let blob = new Blob(chunks, { type: fileType });
@@ -128,7 +127,19 @@ const handelRecordAmounts = recordData => {
   }
 };
 // html-elements functionality
+const stopStreamedVideo = () => {
+  const stream = video.srcObject;
+  const tracks = stream.getTracks();
+  debugger;
+  console.log("stopping stream");
+  tracks.forEach(function(track) {
+    console.log("in stop loop");
 
+    track.stop();
+  });
+
+  video.srcObject = null;
+};
 // Play when ready
 video.addEventListener(
   "canplay",
@@ -207,16 +218,19 @@ async function getMediaStrem(recType, recordData) {
       recordData.streamObj = mediaRecorder;
     }
     //turn on video when taking a photo, video or video live streaming
-    if (recType == "photo" || recType == "video" || recType == "videocall") {
+    if (recType === "photo" || recType === "film" || recType === "filmcall") {
+      debugger;
       video.srcObject = mediaStreamObj;
       video.play();
+      ss(socket).emit("calling", recordData.streamObj);
     }
 
     recordData.streamObj.ondataavailable = function(ev) {
       chunks.push(ev.data);
-      console.log("stream: ", ev);
-      if (recType === "phonecall" || recType === "videocall") {
-        ss(socket).emit("calling", ev.data);
+      debugger;
+      if (recType === "voicecall" || recType === "filmcall") {
+        console.log("before emmiting call to socket");
+        ss(socket).emit("calling", mediaRecorder);
       }
     };
 
@@ -252,25 +266,35 @@ async function getMediaStrem(recType, recordData) {
 }
 audioRecord.onclick = e => {
   console.log("clicked to record audio", e.target.dataset.rectype);
-  console.log(e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 photoRecord.onclick = e => {
-  videoContainer.classList.toggle("d-none");
+  // videoContainer.classList.toggle("d-none");
   console.log("clicked to take a photo", e.target.dataset.rectype);
+  videoContainer.classList.toggle("d-none");
+  if (streaming) {
+    stopStreamedVideo();
+    return;
+  }
   getMediaStrem(e.target.dataset.rectype, recordsState.photo);
 };
 
 videoRecord.onclick = e => {
-  console.log("clicked to take a video", e.target.dataset.rectype);
-  // videoContainer.classList.toggle("d-none");
+  console.log("clicked to take a", e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.film);
 };
 
 videoCall.onclick = e => {
+  debugger;
   console.log("clicked to take a video call", e.target.dataset.rectype);
   videoContainer.classList.toggle("d-none");
+  if (streaming) {
+    stopStreamedVideo();
+    return;
+  }
+  getMediaStrem(e.target.dataset.rectype, recordsState.filmCall);
 };
 phoneCall.onclick = e => {
   console.log("clicked to take a phone call", e.target.dataset.rectype);
+  getMediaStrem(e.target.dataset.rectype, recordsState.voiceCall);
 };

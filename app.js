@@ -67,7 +67,8 @@ io.on("connection", socket => {
   socket.on("typing", data => {
     socket.broadcast.emit("typing", data);
   });
-  socketStream(socket).on("calling", data => {
+  socketStream(socket).on("calling", stream => {
+    console.log("got calling from client");
     socketStream(socket).broadcast.emit("calling", stream);
   });
 });

@@ -1,10 +1,15 @@
 ss(socket).on("calling", function(stream) {
+  console.log("got calling from server");
+  videoContainer.classList.toggle("d-none");
+  video.srcObject = window.URL.createObjectURL(stream);
+  video.play();
   let binaryString = "";
   stream.on("data", function(data) {
     for (var i = 0; i < data.length; i++) {
       binaryString += String.fromCharCode(data[i]);
-      //feed the video with this
-      video.srcObject = mediaStreamObj;
+      //play when ready
+
+      video.srcObject = stream; //should be media stream object
       video.play();
     }
   });
