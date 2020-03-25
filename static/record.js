@@ -16,6 +16,8 @@ const videoButton = document.getElementById("video-button");
 const clearButton = document.getElementById("clear-button");
 const photoFilter = document.querySelector("#photoFilter");
 
+const phoneCall = document.querySelector("#phoneCall");
+const videoCall = document.querySelector("#videoCall");
 const recieverName = document.querySelector(".recieverName");
 recieverName.innerText = "from.."; //to be changed
 //utility:
@@ -42,12 +44,12 @@ const recordsState = {
     streamObj: null,
     fileType: "video/mp4"
   },
-  phoneCall: {
+  voiceCall: {
     constrains: { audio: true, video: false },
     streamObj: null,
     recieverElem: recieverName
   },
-  videoCall: {
+  filmCall: {
     constrains: { audio: true, video: true },
     streamObj: null,
     recieverElem: recieverName
@@ -205,7 +207,7 @@ async function getMediaStrem(recType, recordData) {
       recordData.streamObj = mediaRecorder;
     }
     //turn on video when taking a photo, video or video live streaming
-    if ((recType === "photo" || recType === "video", recType === "videoCall")) {
+    if (recType == "photo" || recType == "video" || recType == "videocall") {
       video.srcObject = mediaStreamObj;
       video.play();
     }
@@ -213,7 +215,7 @@ async function getMediaStrem(recType, recordData) {
     recordData.streamObj.ondataavailable = function(ev) {
       chunks.push(ev.data);
       console.log("stream: ", ev);
-      if (recType === "phoneCall" || recType === "videoCall") {
+      if (recType === "phonecall" || recType === "videocall") {
         ss(socket).emit("calling", ev.data);
       }
     };
@@ -250,14 +252,25 @@ async function getMediaStrem(recType, recordData) {
 }
 audioRecord.onclick = e => {
   console.log("clicked to record audio", e.target.dataset.rectype);
+  console.log(e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 photoRecord.onclick = e => {
+  videoContainer.classList.toggle("d-none");
   console.log("clicked to take a photo", e.target.dataset.rectype);
-  getMediaStrem(e.target.dataset.rectype, recordsState.voice);
+  getMediaStrem(e.target.dataset.rectype, recordsState.photo);
 };
 
 videoRecord.onclick = e => {
   console.log("clicked to take a video", e.target.dataset.rectype);
+  // videoContainer.classList.toggle("d-none");
   getMediaStrem(e.target.dataset.rectype, recordsState.film);
+};
+
+videoCall.onclick = e => {
+  console.log("clicked to take a video call", e.target.dataset.rectype);
+  videoContainer.classList.toggle("d-none");
+};
+phoneCall.onclick = e => {
+  console.log("clicked to take a phone call", e.target.dataset.rectype);
 };

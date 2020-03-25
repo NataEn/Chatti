@@ -37,7 +37,7 @@
         </li>
       </ul>
       <div id="typing" class="font-italic text-muted"></div>
-      <div class="video-container">
+      <div class="d-none video-container">
         <video class='video w-45 h-45 p-3'>Video not available...</video>
         <div class="input-group mb-3"> 
           <div class="input-group-prepend"> 
@@ -69,18 +69,17 @@
           id="name"
         />
         <div class="input-group mb-3">
-          <button
+          <!-- <button
             class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
             id="picture"
           ><span id='picAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
             <input type="file" class="picture" hidden='hidden' multiple accept="image/*;"capture="camera"></input>
-          </button>
+          </button> -->
           <button
             class="m-1 btn btn-outline-primary fas fa-camera fa-lg position-relative"
             id="photo"
             data-recType='photo'
           ><span id='photoAmount' class="badge bg-secondary d-none text-center position-absolute">0</span>
-            
           </button>
           <button
           data-recType='voice' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='audio'

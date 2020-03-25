@@ -50,7 +50,6 @@ socket.on("newMessage", data => {
       if (imageTypes.includes(fileType)) {
         console.log("in audio");
         const img = document.createElement("img");
-        // img.src = "data:image/jpeg;base64," + window.btoa(data.files[0].content);
         img.src = file.content;
         chat.appendChild(img);
       } else if (audioTypes.includes(fileType)) {
@@ -76,20 +75,20 @@ socket.on("newMessage", data => {
 socket.on("typing", data => {
   typing.innerText = `${data.name} is typing...`;
 });
-//this doesn't work yet...
-socket.on("getFile", stream => {
-  console.log("start file stream from server", stream);
-  let imgChunks = "";
-  stream.on("data", data => {
-    console.log("got data from getFile");
-    for (let i = 0; i < data.length; i++) {
-      imgChunks += String.fromCharCode(data[i]);
-    }
-  });
-  stream.on("end", data => {
-    console.log("end of stream");
-  });
-});
+// //this doesn't work yet...
+// socket.on("getFile", stream => {
+//   console.log("start file stream from server", stream);
+//   let imgChunks = "";
+//   stream.on("data", data => {
+//     console.log("got data from getFile");
+//     for (let i = 0; i < data.length; i++) {
+//       imgChunks += String.fromCharCode(data[i]);
+//     }
+//   });
+//   stream.on("end", data => {
+//     console.log("end of stream");
+//   });
+// });
 
 name.oninput = e => {
   userData.name = e.target.value;
