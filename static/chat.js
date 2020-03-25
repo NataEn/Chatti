@@ -15,20 +15,16 @@ const picture = document.querySelector("#picture");
 const inputPicture = document.querySelector("input.picture");
 const picAmount = document.querySelector("#picAmount");
 
-// const audio = document.querySelector("#audio");
-// const inputAudio = document.querySelector(".audio");
-// const player = document.querySelector("#player");
-
 //data
 const userData = { name: "", text: "", files: [] };
 const imageTypes = ["jpeg", "jpg", "png"];
 const audioTypes = ["mp3"];
-const videoTypes = ["mp4"];
+const videoTypes = ["mp4", "webm"];
 socket.on("connect", () => {
-  console.log("connected to server");
+  console.log("client: connected to server");
 });
 socket.on("disconnect", () => {
-  console.log("disconnected from server");
+  console.log("client: disconnected from server");
 });
 
 socket.on("newMessage", data => {
@@ -58,14 +54,14 @@ socket.on("newMessage", data => {
         img.src = file.content;
         chat.appendChild(img);
       } else if (audioTypes.includes(fileType)) {
-        console.log("in audio");
+        console.log("in audio file type");
         const audio = document.createElement("audio");
         audio.controls = true;
         audio.setAttribute("type", "audio/mpeg");
         audio.src = file.content;
         chat.appendChild(audio);
       } else if (videoTypes.includes(fileType)) {
-        console.log("in video");
+        console.log("in video file type");
         const video = document.createElement("video");
         video.setAttribute("type", "video/mp4");
         video.controls = true;
@@ -81,9 +77,9 @@ socket.on("typing", data => {
   typing.innerText = `${data.name} is typing...`;
 });
 //this doesn't work yet...
-socket.on("getFile", (stream, data) => {
-  console.log("start file stream from server", data);
-  const imgChunks = "";
+socket.on("getFile", stream => {
+  console.log("start file stream from server", stream);
+  let imgChunks = "";
   stream.on("data", data => {
     console.log("got data from getFile");
     for (let i = 0; i < data.length; i++) {
@@ -110,11 +106,9 @@ submitBtn.addEventListener("click", e => {
 });
 file.onclick = e => {
   inputFile.click();
-  console.log("click to input file");
 };
 picture.onclick = e => {
   inputPicture.click();
-  console.log("clicked to input picture or take a picture");
 };
 
 inputFile.onchange = e => {
