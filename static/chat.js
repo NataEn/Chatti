@@ -106,9 +106,9 @@ submitBtn.addEventListener("click", e => {
 file.onclick = e => {
   inputFile.click();
 };
-// picture.onclick = e => {
-//   inputPicture.click();
-// };
+picture.onclick = e => {
+  inputPicture.click();
+};
 
 inputFile.onchange = e => {
   fileAmount.classList.toggle("d-none");

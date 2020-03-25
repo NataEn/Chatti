@@ -9,6 +9,7 @@ const photoAmount = document.querySelector("#photoAmount");
 
 const videoContainer = document.querySelector(".video-container");
 const video = document.querySelector(".video");
+const player = document.querySelector("#player");
 const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
 const photoButton = document.getElementById("photo-button");
@@ -128,16 +129,23 @@ const handelRecordAmounts = recordData => {
   }
 };
 // html-elements functionality
-const stopStreamedVideo = () => {
-  const stream = video.srcObject;
-  const tracks = stream.getTracks();
+const stopRecordStream = () => {
+  const audioStream = player.srcObject;
+  const audioTracks = audioStream.getTracks();
+  const videoStream = video.srcObject;
+  const videoTracks = videoStream.getTracks();
   console.log("stopping stream");
-  tracks.forEach(function(track) {
-    console.log("in stop loop");
+  videoTracks.forEach(function(track) {
+    console.log("in video stop loop");
     track.stop();
   });
-
+  audioTracks.forEach(function(track) {
+    console.log("in audio stop loop");
+    track.stop();
+  });
+  player.srcObject = null;
   video.srcObject = null;
+  streaming = false;
 };
 // Play when ready
 video.addEventListener(
@@ -223,6 +231,8 @@ async function getMediaStrem(recType, recordData) {
       video.srcObject = mediaStreamObj;
       video.play();
       ss(socket).emit("calling", recordData.streamObj);
+    } else if (recType === "voice") {
+      player.srcObject = mediaStreamObj;
     }
 
     recordData.streamObj.ondataavailable = function(ev) {
@@ -264,12 +274,19 @@ async function getMediaStrem(recType, recordData) {
   }
 }
 audioRecord.onclick = e => {
+  console.log("click to record audio");
+
+  if (streaming) {
+    console.log("clicked to stop streaming");
+    stopRecordStream();
+    return;
+  }
   getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
 photoRecord.onclick = e => {
   videoContainer.classList.toggle("d-none");
   if (streaming) {
-    stopStreamedVideo();
+    stopRecordStream();
     return;
   }
   getMediaStrem(e.target.dataset.rectype, recordsState.photo);
@@ -284,7 +301,7 @@ videoCall.onclick = e => {
   console.log("clicked to take a video call", e.target.dataset.rectype);
   videoContainer.classList.toggle("d-none");
   if (streaming) {
-    stopStreamedVideo();
+    stopRecordStream();
     return;
   }
   getMediaStrem(e.target.dataset.rectype, recordsState.filmCall);

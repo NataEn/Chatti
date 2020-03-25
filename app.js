@@ -5,9 +5,6 @@ const fs = require("fs");
 const path = require("path");
 const app = express();
 
-const audioTypes = ["mp3"];
-const videoTypes = ["mp4"];
-
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
   if (fs.existsSync(dirname)) {
