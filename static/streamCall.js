@@ -4,20 +4,22 @@ const usersId = {
   initiator: "",
   contacts: [],
 };
-const desktopConstarains = {
-  video: {
-    manadatory: { maxWidth: 800, maxHeight: 600 },
-  },
-  audio: true,
-};
-const mobileConstarains = {
-  video: {
-    manadatory: { maxWidth: 480, maxHeight: 320 },
-  },
-  audio: true,
-};
+
 const setConstrains = () => {
   let constrains = {};
+  const desktopConstarains = {
+    video: {
+      manadatory: { maxWidth: 800, maxHeight: 600 },
+    },
+    audio: true,
+  };
+  const mobileConstarains = {
+    video: {
+      manadatory: { maxWidth: 480, maxHeight: 320 },
+    },
+    audio: true,
+  };
+
   if (/Android|iPhone|ipad/i.test(navigator.userAgent)) {
     constrains = mobileConstarains;
   } else {
@@ -33,26 +35,6 @@ const hasUserMedia = () => {
     navigator.mozGetUserMedia
   );
 };
-if (hasUserMedia()) {
-  navigator.getUserMedia =
-    navigator.getUserMedia ||
-    navigator.webkitGetUserMedia ||
-    navigator.mozGetUserMedia;
-
-  //enabling video and audio channels
-  navigator.getUserMedia(
-    constraints,
-    function (stream) {
-      var video = document.querySelector("video");
-
-      //inserting our stream to the video tag
-      video.src = window.URL.createObjectURL(stream);
-    },
-    function (err) {}
-  );
-} else {
-  alert("WebRTC is not supported");
-}
 
 const startVideoCall = () => {
   let constrains = setConstrains();
@@ -61,9 +43,10 @@ const startVideoCall = () => {
     navigator.webkitGetUserMedia ||
     navigator.mozGetUserMedia;
 
-  navigator
-    .getUserMedia(constrains)
-    .then((stream) => {
+  // navigator.mediaDevices.getUserMedia
+  navigator.getUserMedia(
+    constrains,
+    function (stream) {
       const peer = new SimplePeer({
         initiator: location.hash === "#init",
         trickle: false,
@@ -107,11 +90,19 @@ const startVideoCall = () => {
         }
         console.log("got stream:", stream);
       });
-    })
-    .catch((err) => {
+    },
+    function (err) {
       console.log(err);
-    });
+      alert("webRtc supported but got error:", err);
+    }
+  );
 };
+if (hasUserMedia()) {
+  //enabling video and audio channels
+  startVideoCall();
+} else {
+  alert("WebRTC is not supported");
+}
 startVideoCall();
 
 // ss(socket).on("calling", function(stream) {
