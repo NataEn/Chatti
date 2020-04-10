@@ -13,7 +13,8 @@ const credentials = { key: privateKey, cert: certificate };
 const socketStream = require("socket.io-stream");
 const path = require("path");
 const app = express();
-const httpsServer = https.createServer(credentials, app);
+const httpServer = http.createServer(app);
+//const httpsServer = https.createServer(credentials, app);
 
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
@@ -23,9 +24,9 @@ function ensureDirectoryExistence(filePath) {
   ensureDirectoryExistence(dirname);
   fs.mkdirSync(dirname);
 }
-
-const server = httpsServer.listen(3000, () => {
-  console.log("listening to requests on port 3000...");
+const port = process.env.PORT || 3000;
+const server = httpServer.listen(port, () => {
+  console.log(`listening to requests on port ${port}...`);
 });
 
 app.use(express.static("static"));
