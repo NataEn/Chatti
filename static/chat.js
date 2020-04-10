@@ -1,4 +1,4 @@
-const socket = io.connect("http://localhost:3000");
+const socket = io.connect("https://nyx:3000");
 //dom elements
 
 const message = document.querySelector("#message");
@@ -27,7 +27,7 @@ socket.on("disconnect", () => {
   console.log("client: disconnected from server");
 });
 
-socket.on("newMessage", data => {
+socket.on("newMessage", (data) => {
   const incomingMessage = document.createElement("li");
   incomingMessage.classList = "bg-light list-group-item";
 
@@ -48,7 +48,6 @@ socket.on("newMessage", data => {
       console.log(file.content);
 
       if (imageTypes.includes(fileType)) {
-        console.log("in audio");
         const img = document.createElement("img");
         img.src = file.content;
         chat.appendChild(img);
@@ -72,7 +71,7 @@ socket.on("newMessage", data => {
     }
   }
 });
-socket.on("typing", data => {
+socket.on("typing", (data) => {
   typing.innerText = `${data.name} is typing...`;
 });
 // //this doesn't work yet...
@@ -90,39 +89,39 @@ socket.on("typing", data => {
 //   });
 // });
 
-name.oninput = e => {
+name.oninput = (e) => {
   userData.name = e.target.value;
 };
-message.oninput = e => {
+message.oninput = (e) => {
   userData.text = e.target.value;
   socket.emit("typing", { name: userData.name });
 };
-submitBtn.addEventListener("click", e => {
+submitBtn.addEventListener("click", (e) => {
   e.preventDefault();
   typing.innerText = "";
   console.log(inputPicture.files);
   socket.emit("newMessage", userData);
 });
-file.onclick = e => {
+file.onclick = (e) => {
   inputFile.click();
 };
-picture.onclick = e => {
+picture.onclick = (e) => {
   inputPicture.click();
 };
 
-inputFile.onchange = e => {
+inputFile.onchange = (e) => {
   fileAmount.classList.toggle("d-none");
   fileAmount.innerText = inputFile.files.length;
   for (let i = 0; i < inputFile.files.length; i++) {
     if (inputFile.files[i].type.match("image.*")) {
       const reader = new FileReader();
       reader.readAsDataURL(inputFile.files[i]);
-      reader.onload = e => {
+      reader.onload = (e) => {
         console.log("added image file");
         userData.files.push({
           name: inputFile.files[i].name,
           size: inputFile.files[i].size,
-          content: reader.result
+          content: reader.result,
         });
         const img = new Image();
         img.src = reader.result;
@@ -132,12 +131,12 @@ inputFile.onchange = e => {
       const reader = new FileReader();
       const audioPlayer = new Audio();
       reader.readAsDataURL(inputFile.files[i]);
-      reader.onload = e => {
+      reader.onload = (e) => {
         console.log("added audio file");
         userData.files.push({
           name: inputFile.files[i].name,
           size: inputFile.files[i].size,
-          content: reader.result
+          content: reader.result,
         });
         audioPlayer.src = reader.result;
         audioPlayer.controls = true;
@@ -148,12 +147,12 @@ inputFile.onchange = e => {
       const reader = new FileReader();
       const videoPlayer = document.createElement("video");
       reader.readAsDataURL(inputFile.files[i]);
-      reader.onload = e => {
+      reader.onload = (e) => {
         console.log("added audio file");
         userData.files.push({
           name: inputFile.files[i].name,
           size: inputFile.files[i].size,
-          content: reader.result
+          content: reader.result,
         });
         videoPlayer.src = reader.result;
         videoPlayer.controls = true;
@@ -164,19 +163,19 @@ inputFile.onchange = e => {
   }
 };
 
-inputPicture.onchange = e => {
+inputPicture.onchange = (e) => {
   picAmount.classList.toggle("d-none");
   picAmount.innerText = inputPicture.files.length;
   for (let i = 0; i < inputPicture.files.length; i++) {
     if (inputPicture.files[i].type.match("image.*")) {
       const reader = new FileReader();
       reader.readAsDataURL(inputPicture.files[i]);
-      reader.onload = e => {
+      reader.onload = (e) => {
         console.log(typeof e.target.result);
         userData.files.push({
           name: inputPicture.files[i].name,
           size: inputPicture.files[i].size,
-          content: reader.result
+          content: reader.result,
         });
         const img = new Image();
         img.src = reader.result;

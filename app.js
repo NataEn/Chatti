@@ -1,9 +1,19 @@
 const express = require("express");
 const socket = require("socket.io");
-const socketStream = require("socket.io-stream");
+const http = require("http");
+const https = require("https");
 const fs = require("fs");
+const privateKey = fs.readFileSync("./server_credencials/server.key", "utf8");
+const certificate = fs.readFileSync("./server_credencials/server.cert", "utf8");
+const credentials = { key: privateKey, cert: certificate };
+
+// p2p=require('socket.io-p2p-server').Server;
+// io.use(p2p)
+
+const socketStream = require("socket.io-stream");
 const path = require("path");
 const app = express();
+const httpsServer = https.createServer(credentials, app);
 
 function ensureDirectoryExistence(filePath) {
   const dirname = path.dirname(filePath);
@@ -14,14 +24,14 @@ function ensureDirectoryExistence(filePath) {
   fs.mkdirSync(dirname);
 }
 
-const server = app.listen(3000, () => {
+const server = httpsServer.listen(3000, () => {
   console.log("listening to requests on port 3000...");
 });
 
 app.use(express.static("static"));
 
 const io = socket(server);
-io.on("connection", socket => {
+io.on("connection", (socket) => {
   console.log("connectting user with socket...", socket.id);
 
   //send stream to client/browser
@@ -36,7 +46,7 @@ io.on("connection", socket => {
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
   });
-  socket.on("newMessage", data => {
+  socket.on("newMessage", (data) => {
     console.log("got data from user");
     if (data.files && data.files.length) {
       for (let i = 0; i < data.files.length; i++) {
@@ -46,7 +56,7 @@ io.on("connection", socket => {
         ensureDirectoryExistence(fd);
 
         //saving data recieved from client to server on file:
-        fs.writeFile(fd, base64Data, "base64", err => {
+        fs.writeFile(fd, base64Data, "base64", (err) => {
           console.log("error", err);
         });
 
@@ -61,10 +71,10 @@ io.on("connection", socket => {
     }
     io.sockets.emit("newMessage", data);
   });
-  socket.on("typing", data => {
+  socket.on("typing", (data) => {
     socket.broadcast.emit("typing", data);
   });
-  socketStream(socket).on("calling", stream => {
+  socketStream(socket).on("calling", (stream) => {
     console.log("got calling from client");
     socketStream(socket).broadcast.emit("calling", stream);
   });

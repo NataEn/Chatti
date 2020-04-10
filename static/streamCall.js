@@ -1,3 +1,10 @@
+const remoteVideo = document.querySelector("#remoteVideo");
+const localVideo = document.querySelector("#localVideo");
+const usersId = {
+  initiator: "",
+  contacts: []
+};
+
 const startVideoCall = () => {
   navigator.mediaDevices
     .getUserMedia({ video: true })
@@ -14,36 +21,43 @@ const startVideoCall = () => {
       }
 
       peer.on("signal", function(data) {
+        usersId.initiator = data;
+        console.log("initiator", data);
         document.getElementById("yourId").value = JSON.stringify(data);
       });
 
       document.getElementById("connect").addEventListener("click", function() {
-        var otherId = JSON.parse(document.getElementById("otherId").value);
+        let otherId = JSON.parse(document.getElementById("otherId").value);
         peer.signal(otherId);
       });
 
       document
         .getElementById("yourMessage")
         .addEventListener("change", function() {
-          var yourMessage = document.getElementById("yourMessage").value;
+          let yourMessage = document.getElementById("yourMessage").value;
           peer.send(yourMessage);
         });
 
       peer.on("data", function(data) {
         document.getElementById("messages").textContent += data + "\n";
       });
-
+      //open with other device and see if got stream correctly
       peer.on("stream", stream => {
-        const video = document.querySelector("#remoteVideo");
+        if (!peer.initiator) {
+          remoteVideo.srcObject = stream;
+          remoteVideo.play();
+        } else if (peer.initiator) {
+          localVideo.srcObject = stream;
+          localVideo.play();
+        }
         console.log("got stream:", stream);
-        video.srcObject = stream;
-        video.play();
       });
     })
     .catch(err => {
       console.log(err);
     });
 };
+startVideoCall();
 
 // ss(socket).on("calling", function(stream) {
 //   console.log("got calling from server");

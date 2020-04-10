@@ -5,6 +5,7 @@ npm-debug.log*
 
 # Dependency directories
 node_modules/
+server_credencials/
 jspm_packages/
 
 # Output of 'npm pack'
