@@ -50,7 +50,7 @@ const startVideoCall = () => {
       const video = document.querySelector(".video");
 
       //inserting our stream to the video tag
-      video.src = window.URL.createObjectURL(stream);
+      video.src = stream;
       // const peer = new SimplePeer({
       //   initiator: location.hash === "#init",
       //   trickle: false,
