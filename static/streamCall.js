@@ -47,7 +47,7 @@ const startVideoCall = () => {
   navigator.getUserMedia(
     constrains,
     function (stream) {
-      const video = document.querySelector(".video1");
+      const video = document.querySelector(".video");
 
       //inserting our stream to the video tag
       video.src = window.URL.createObjectURL(stream);
