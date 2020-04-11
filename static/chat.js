@@ -1,4 +1,4 @@
-const socket = io.connect("https://localhost:3000/");
+const socket = io.connect("https://chat-2-me.herokuapp.com/");
 //dom elements
 
 const message = document.querySelector("#message");
