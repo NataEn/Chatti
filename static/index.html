@@ -21,22 +21,12 @@
   </head>
   <body class="container-fluid">
     <h1 class="text-center">Welcom to my chat app</h1>
-    <button
-    data-recType='phonecall' class="m-1 btn btn-outline-primary fas fa-microphone fa-lg position-relative" id='phoneCall'
-    >
-    <span class="recieverName badge bg-secondary d-none text-center position-absolute">0</span></button>
-    <button
-    data-recType='filmcall'
-      class="m-1 btn btn-outline-primary fas fa-video fa-lg position-relative" id='videoCall'
-    ><span class="recieverName badge bg-secondary d-none text-center position-absolute">0</span></button>
-
     <div id="chat">
       <ul id="chat-window" class="list-group p-3 mb-2 bg-light text-dark">
         <li class="bg-light list-group-item">
           <span class="text-primary">system: </span><span>no messages yet</span>
         </li>
       </ul>
-      <video class='video w-45 h-45 p-3' autoplay></video>
       <div id="typing" class="font-italic text-muted"></div>
       <div class="d-none video-container">
         <video class='video w-45 h-45 p-3' muted>Video not available...</video>

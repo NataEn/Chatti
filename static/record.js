@@ -29,32 +29,32 @@ const recordsState = {
     counter: 0,
     counterElem: audioAmount,
     streamObj: null,
-    fileType: "audio/mp3"
+    fileType: "audio/mp3",
   },
   photo: {
     constrains: { audio: false, video: true },
     counter: 0,
     counterElem: photoAmount,
     stremObj: null,
-    fileType: "image/jpg"
+    fileType: "image/jpg",
   },
   film: {
     constrains: { audio: true, video: true },
     counter: 0,
     counterElem: videoAmount,
     streamObj: null,
-    fileType: "video/mp4"
+    fileType: "video/mp4",
   },
   voiceCall: {
     constrains: { audio: true, video: false },
     streamObj: null,
-    recieverElem: recieverName
+    recieverElem: recieverName,
   },
   filmCall: {
     constrains: { audio: true, video: true },
     streamObj: null,
-    recieverElem: recieverName
-  }
+    recieverElem: recieverName,
+  },
 };
 
 let streaming = false;
@@ -74,7 +74,7 @@ const createWrapper = (childelement, recordData) => {
   const classes = ["fas", "fa-trash-alt", "removeRecord"];
   trash.classList.add(...classes);
   trash.setAttribute("data-num", childelement.dataset.num);
-  trash.onclick = e => {
+  trash.onclick = (e) => {
     console.log("clicked trash", e.currentTarget.parentNode);
     for (let i = 0; i < userData.files.length; i++) {
       if (
@@ -112,7 +112,7 @@ function takePicture() {
   userData.files.push({
     name: `recPhoto_${recordsState.photo.counter}.png`,
     size: base64data.length,
-    content: base64data
+    content: base64data,
   });
 
   const photoWrappwer = createWrapper(img, recordsState.photo);
@@ -120,7 +120,7 @@ function takePicture() {
 }
 
 ///presenting the audio record amounts:
-const handelRecordAmounts = recordData => {
+const handelRecordAmounts = (recordData) => {
   if (recordData.counter === 0) {
     recordData.counterElem.classList.add("d-none");
   } else {
@@ -135,11 +135,11 @@ const stopRecordStream = () => {
   const videoStream = video.srcObject;
   const videoTracks = videoStream.getTracks();
   console.log("stopping stream");
-  videoTracks.forEach(function(track) {
+  videoTracks.forEach(function (track) {
     console.log("in video stop loop");
     track.stop();
   });
-  audioTracks.forEach(function(track) {
+  audioTracks.forEach(function (track) {
     console.log("in audio stop loop");
     track.stop();
   });
@@ -150,7 +150,7 @@ const stopRecordStream = () => {
 // Play when ready
 video.addEventListener(
   "canplay",
-  function(e) {
+  function (e) {
     if (!streaming) {
       streaming = true;
     }
@@ -159,22 +159,25 @@ video.addEventListener(
   false
 );
 // Filter event
-photoFilter.onchange = e => {
+photoFilter.onchange = (e) => {
   console.log("changed filter to", e.target.value);
   filter = e.target.value;
   video.style.filter = filter;
   e.preventDefault();
 };
 //take photo
-photoButton.onclick = e => {
+photoButton.onclick = (e) => {
+  debugger;
   takePicture();
   e.preventDefault();
 };
 videoButton.onclick = () => {
+  debugger;
   videoRecord.click();
 };
 // Clear event
-clearButton.onclick = e => {
+clearButton.onclick = (e) => {
+  debugger;
   filter = "none";
   video.style.filter = filter;
   console.log("changed filter to:", video.style.filter);
@@ -184,12 +187,12 @@ clearButton.onclick = e => {
 //recording devices
 navigator.mediaDevices
   .enumerateDevices()
-  .then(devices => {
-    devices.forEach(device => {
+  .then((devices) => {
+    devices.forEach((device) => {
       console.log(device.kind, device.label);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.log(`an error occured: ${err.name}: ${err.message}`);
   });
 //add recorded element to DOM
@@ -235,7 +238,7 @@ async function getMediaStrem(recType, recordData) {
       player.srcObject = mediaStreamObj;
     }
 
-    recordData.streamObj.ondataavailable = function(ev) {
+    recordData.streamObj.ondataavailable = function (ev) {
       chunks.push(ev.data);
       if (recType === "voicecall" || recType === "filmcall") {
         console.log("before emmiting call to socket");
@@ -243,7 +246,7 @@ async function getMediaStrem(recType, recordData) {
       }
     };
 
-    recordData.streamObj.onstop = ev => {
+    recordData.streamObj.onstop = (ev) => {
       let blob = new Blob(chunks, { type: recordData.fileType });
       const reader = new FileReader();
       reader.readAsDataURL(blob);
@@ -255,7 +258,7 @@ async function getMediaStrem(recType, recordData) {
             recordData.fileType.split("/")[1]
           }`,
           size: blob.size,
-          content: base64data
+          content: base64data,
         });
       };
       addRecordToChat(recordData, blob);
@@ -273,7 +276,7 @@ async function getMediaStrem(recType, recordData) {
     console.log(`an error occured: ${err.name}: ${err.message}`);
   }
 }
-audioRecord.onclick = e => {
+audioRecord.onclick = (e) => {
   console.log("click to record audio");
 
   if (streaming) {
@@ -283,7 +286,7 @@ audioRecord.onclick = e => {
   }
   getMediaStrem(e.target.dataset.rectype, recordsState.voice);
 };
-photoRecord.onclick = e => {
+photoRecord.onclick = (e) => {
   videoContainer.classList.toggle("d-none");
   if (streaming) {
     stopRecordStream();
@@ -292,11 +295,11 @@ photoRecord.onclick = e => {
   getMediaStrem(e.target.dataset.rectype, recordsState.photo);
 };
 
-videoRecord.onclick = e => {
+videoRecord.onclick = (e) => {
   getMediaStrem(e.target.dataset.rectype, recordsState.film);
 };
 
-videoCall.onclick = e => {
+videoCall.onclick = (e) => {
   debugger;
   console.log("clicked to take a video call", e.target.dataset.rectype);
   videoContainer.classList.toggle("d-none");
@@ -306,7 +309,7 @@ videoCall.onclick = e => {
   }
   getMediaStrem(e.target.dataset.rectype, recordsState.filmCall);
 };
-phoneCall.onclick = e => {
+phoneCall.onclick = (e) => {
   console.log("clicked to take a phone call", e.target.dataset.rectype);
   getMediaStrem(e.target.dataset.rectype, recordsState.voiceCall);
 };

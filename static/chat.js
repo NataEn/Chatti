@@ -1,4 +1,4 @@
-const socket = io.connect("https://chat-2-me.herokuapp.com/");
+const socket = io.connect("https://localhost:3000/");
 //dom elements
 
 const message = document.querySelector("#message");
@@ -110,6 +110,7 @@ picture.onclick = (e) => {
 };
 
 inputFile.onchange = (e) => {
+  debugger;
   fileAmount.classList.toggle("d-none");
   fileAmount.innerText = inputFile.files.length;
   for (let i = 0; i < inputFile.files.length; i++) {
